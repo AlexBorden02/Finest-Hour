@@ -49,6 +49,15 @@ class Camera:
             self.zoom = new_zoom
             self.offset = new_offset
 
+    def move(self, dx, dy):
+        new_offset = self.offset + pygame.Vector2(dx, dy)
+        new_pos = pygame.Vector2(-new_offset.x/self.zoom, -new_offset.y/self.zoom)
+        if not self.border.collidepoint(new_pos):
+            new_pos.x = min(max(new_pos.x, self.border.left), self.border.right)
+            new_pos.y = min(max(new_pos.y, self.border.top), self.border.bottom)
+            new_offset = pygame.Vector2(-new_pos.x*self.zoom, -new_pos.y*self.zoom)
+        self.offset = new_offset
+
     def apply(self, pos):
         return tuple(map(int, (self.zoom * pos[0] + self.offset.x, self.zoom * pos[1] + self.offset.y)))
     

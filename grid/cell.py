@@ -2,7 +2,17 @@
 import pygame
 
 class Cell:
-    def __init__(self, x, y, size, selected=False):
+    def __init__(self, x, y, size):
         self.rect = pygame.Rect(x, y, size, size)
-        self.selected = selected 
-        self.id = (x/10, y/10)
+        self.id = (int(x/10), int(y/10))
+        self.cell_type = None
+        self.cell_makeup = {'water': 0, 'land': 0, 'shoreline': 0}
+
+    def get_type(self):
+        return self.cell_type
+
+    def set_type(self, type):
+        self.cell_type = type
+
+    def increment_makeup(self, subtype):
+        self.cell_makeup[subtype] += 1
