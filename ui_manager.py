@@ -15,7 +15,7 @@ class UIManager:
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
             cls._instance.buttons = []
-            cls._instance.camera = Camera(init_pos=(800, 1400), zoom=3, border=pygame.Rect(-1600, -900, 3200, 1800))
+            cls._instance.camera = Camera(zoom=3)
         return cls._instance
     
     def update(self, events):

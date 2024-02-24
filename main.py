@@ -1,12 +1,21 @@
+import cv2
+import numpy as np
 import pygame
 from settings import hidden_variables as settings
 
 from gameStateManager import GameStateManager
 from grid.grid import Grid
 
+# Wireframe map for game
+image = cv2.imread('map_upscaled.png', cv2.IMREAD_GRAYSCALE)
+blurred = cv2.GaussianBlur(image, (5, 5), 0)
+edges = 255 - cv2.flip(cv2.rotate(cv2.Canny(blurred, 100, 200), cv2.ROTATE_90_COUNTERCLOCKWISE), 0)
+
 # Initialize Pygame
 pygame.init()
-map_italy = pygame.image.load('map_upscaled.png')
+
+# Convert edges to Pygame surface
+map_italy = pygame.surfarray.make_surface(edges)
 
 # Screen dimensions
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
@@ -19,6 +28,7 @@ grid = Grid(map_italy.get_rect().width, map_italy.get_rect().height, cell_size)
 game_state_manager = GameStateManager(grid=grid)
 print(game_state_manager.get_state())  # Access current state
 
+# Cell data population, temporary lines 31-68
 def color_in_band(color1, color2, band_factor):
     return all(abs(c1 - c2) <= band_factor for c1, c2 in zip(color1, color2))
 
@@ -30,6 +40,8 @@ SHORELINE = (0, 0, 0)  # Black
 # Band factor
 band_factor = 10  # Adjust this value to control the color band
 
+colour_map = pygame.image.load('map_upscaled.png')
+
 # Loop through each cell in the grid
 for cell in grid.cells:
     # Loop through each pixel in the cell
@@ -37,7 +49,7 @@ for cell in grid.cells:
         for y in range(cell.id[1]*cell_size, (cell.id[1]+1)*cell_size):
             try:
                 # Get the color of the pixel
-                color = map_italy.get_at((x, y))
+                color = colour_map.get_at((x, y))
             except IndexError:
                 continue
 
