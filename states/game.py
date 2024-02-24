@@ -17,10 +17,10 @@ def game_interface(screen, game_state_manager, camera, events, grid, world_map, 
     # Blit the map onto the new surface at the appropriate offset
     visible_surface.blit(world_map, (0, 0), visible_rect)
 
-    # Calculate the position of the circle relative to the map
-    circle_pos = (world_map.get_width() // 2 - visible_rect.x, world_map.get_height() // 2 - visible_rect.y)
-    # Draw a circle at the calculated position
-    pygame.draw.circle(visible_surface, (255, 0, 0), circle_pos, 50)
+    # # Calculate the position of the circle relative to the map
+    # circle_pos = (world_map.get_width() // 2 - visible_rect.x, world_map.get_height() // 2 - visible_rect.y)
+    # # Draw a circle at the calculated position
+    # pygame.draw.circle(visible_surface, (255, 0, 0), circle_pos, 50)
 
     # draw selected cell
     selected_cell = game_state_manager.ui_manager.get_selected_cell()
@@ -33,19 +33,14 @@ def game_interface(screen, game_state_manager, camera, events, grid, world_map, 
     # Draw the scaled surface onto the screen
     screen.blit(scaled_surface, (0, 0))
 
-    buttons = []
-
-    for button in buttons:
-        button.render(screen)
-
     # draw selected cell makeup in top left corner
+    font = pygame.font.Font(None, 36)
     if selected_cell:
-        font = pygame.font.Font(None, 36)
         text = font.render(str(selected_cell.cell_makeup), True, (0, 0, 0))
         screen.blit(text, (10, 10))
 
-    # simple popup window
-    #popupTest = PopupWindow(game_state_manager=game_state_manager, x=100, y=100, width=400, height=200, content="Hello, world!")
+    isSelected = lambda window: window.selected.__str__()
 
-    game_state_manager.ui_manager.update(events)
-        
+    text = font.render(game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
+    screen.blit(text, (10, 50))
+            

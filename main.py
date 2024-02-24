@@ -1,12 +1,8 @@
 import pygame
-import sys
-import math
+from settings import hidden_variables as settings
 
 from gameStateManager import GameStateManager
-from states.main_menu import main_menu
-from states.game import game_interface
 from grid.grid import Grid
-from ui.camera import Camera
 
 # Initialize Pygame
 pygame.init()
@@ -16,23 +12,23 @@ map_italy = pygame.image.load('map_italy.png')
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-cell_size = 5
+cell_size = settings['cell_size']
 grid = Grid(map_italy.get_rect().width, map_italy.get_rect().height, cell_size)
 
 # Basic setup for menu and game states
 game_state_manager = GameStateManager(grid=grid)
 print(game_state_manager.get_state())  # Access current state
 
+def color_in_band(color1, color2, band_factor):
+    return all(abs(c1 - c2) <= band_factor for c1, c2 in zip(color1, color2))
+
 # Colors
 WATER = (0, 168, 243)  # Blue
 LAND = (14, 209, 69)  # Green
 SHORELINE = (0, 0, 0)  # Black
+
+# Band factor
+band_factor = 10  # Adjust this value to control the color band
 
 # Loop through each cell in the grid
 for cell in grid.cells:
@@ -46,11 +42,11 @@ for cell in grid.cells:
                 continue
 
             # Increment the count of this color in the cell
-            if color == WATER:
+            if color_in_band(color, WATER, band_factor):
                 cell.increment_makeup('water')
-            elif color == LAND:
+            elif color_in_band(color, LAND, band_factor):
                 cell.increment_makeup('land')
-            elif color == SHORELINE:
+            elif color_in_band(color, SHORELINE, band_factor):
                 cell.increment_makeup('shoreline')
 
     # once the cell has been analyzed, set the type
@@ -66,12 +62,8 @@ while True:
     game_state = game_state_manager.get_state()
     camera = game_state_manager.ui_manager.get_camera()
     events = pygame.event.get()
-    screen.fill(WHITE)
+    screen.fill((255, 255, 255))
 
-    if game_state_manager.get_state() == 'main_menu':
-        main_menu(screen, game_state_manager)
-    elif game_state_manager.get_state() == 'game':
-        game_interface(screen, game_state_manager, camera, events, grid, map_italy, cell_size, SCREEN_WIDTH, SCREEN_HEIGHT)
-        game_state_manager.ui_manager.render_popup_windows(screen)
+    game_state_manager.run(screen, game_state_manager, camera, events, grid, map_italy, cell_size, SCREEN_WIDTH, SCREEN_HEIGHT)
     
     pygame.display.flip()
