@@ -4,7 +4,7 @@ import pygame
 class Cell:
     def __init__(self, x, y, size):
         self.rect = pygame.Rect(x, y, size, size)
-        self.id = (int(x/10), int(y/10))
+        self.id = (x // size, y // size)
         self.cell_type = None
         self.cell_makeup = {'water': 0, 'land': 0, 'shoreline': 0}
 
