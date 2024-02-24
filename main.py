@@ -6,7 +6,7 @@ from grid.grid import Grid
 
 # Initialize Pygame
 pygame.init()
-map_italy = pygame.image.load('map_italy.png')
+map_italy = pygame.image.load('map_upscaled.png')
 
 # Screen dimensions
 SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
@@ -23,8 +23,8 @@ def color_in_band(color1, color2, band_factor):
     return all(abs(c1 - c2) <= band_factor for c1, c2 in zip(color1, color2))
 
 # Colors
-WATER = (0, 168, 243)  # Blue
-LAND = (14, 209, 69)  # Green
+WATER = (235, 235, 235)  # Blue
+LAND = (35, 226, 84)  # Green
 SHORELINE = (0, 0, 0)  # Black
 
 # Band factor

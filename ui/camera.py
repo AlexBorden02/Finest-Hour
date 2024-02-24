@@ -7,7 +7,7 @@ class Camera:
         self.zoom = zoom
         self.min_zoom = min_zoom
         self.max_zoom = max_zoom
-        self.border = border if border else pygame.Rect(-float('inf')/2, -float('inf')/2, float('inf'), float('inf'))
+        self.border = border if border else pygame.Rect(-2500, -2500, 5000, 5000)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
