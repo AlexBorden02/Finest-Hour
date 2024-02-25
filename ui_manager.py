@@ -15,7 +15,7 @@ class UIManager:
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
             cls._instance.buttons = []
-            cls._instance.camera = Camera(init_pos=(800, 1400), zoom=3, border=pygame.Rect(-1600, -900, 3200, 1800))
+            cls._instance.camera = Camera(zoom=3)
         return cls._instance
     
     def update(self, events):
@@ -31,7 +31,9 @@ class UIManager:
                     self._instance.game_state_manager.set_state('main_menu')
                 if event.key == pygame.K_m:
                     self._instance.add_popup_window(PopupWindow(self._instance.game_state_manager, 400, 400, 200, 200, "This is a test popup window"))
-
+                # if ctrl + s is pressed, save the game
+                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
+                    self._instance.game_state_manager.save_game("save1")
             # essentially just checking if the mouse is not interacting with a window or button
             # if it is not, then the camera should handle the event
             if not window_interaction and not button_interaction:
@@ -55,6 +57,12 @@ class UIManager:
                                     self._instance.set_selected_cell(None)
                                 else:
                                     self._instance.set_selected_cell(cell)
+                    elif event.button == 3: # right click
+                        window_pos = event.pos
+                        cell = self._instance.game_state_manager.grid.get_cell(window_pos, self.get_camera())
+                        if cell:
+                            cell.set_modified(True)
+                                
 
     def get_camera(self):
         return self._instance.camera

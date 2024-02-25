@@ -6,7 +6,7 @@ sys.path.append('..')
 from ui.popup import PopupWindow
 from ui.button import Button
 
-def game_interface(screen, game_state_manager, camera, events, grid, world_map, cell_size, SCREEN_WIDTH, SCREEN_HEIGHT):
+def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN_WIDTH, SCREEN_HEIGHT):
     # Calculate the visible portion of the map
     visible_rect = pygame.Rect(-camera.offset.x / camera.zoom, -camera.offset.y / camera.zoom, SCREEN_WIDTH / camera.zoom, SCREEN_HEIGHT / camera.zoom)
     # Create a new surface that is the size of the visible area
@@ -26,7 +26,7 @@ def game_interface(screen, game_state_manager, camera, events, grid, world_map, 
     selected_cell = game_state_manager.ui_manager.get_selected_cell()
     if selected_cell:
         cell_pos = (selected_cell.rect.x - visible_rect.x, selected_cell.rect.y - visible_rect.y)
-        pygame.draw.rect(visible_surface, (0, 255, 0), (cell_pos[0], cell_pos[1], cell_size, cell_size), 1)
+        pygame.draw.rect(visible_surface, (0, 255, 0), (cell_pos[0], cell_pos[1], game_state_manager.grid.get_cell_size(), game_state_manager.grid.get_cell_size()), 1)
 
     # Scale the visible surface to the screen size
     scaled_surface = pygame.transform.scale(visible_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))

@@ -37,3 +37,6 @@ class Grid:
     def unselect_all(self):
         for cell in self.cells:
             cell.selected = False
+
+    def get_cell_size(self):
+        return self.cell_size
