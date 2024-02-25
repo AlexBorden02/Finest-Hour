@@ -1,1 +1,1 @@
-{"save_name": "save1", "map": {"map_name": "map_upscaled.png", "map_width": 2220, "map_height": 2352}, "grid": {"cells": [{"id": [64, 11], "cell_makeup": {"water": 0, "land": 25, "shoreline": 0}, "cell_type": "land", "modified": true}]}}
+{"save_name": "save1", "map": {"map_name": "map_italy.png", "map_width": 1056, "map_height": 1272}, "grid": {"cells": []}}

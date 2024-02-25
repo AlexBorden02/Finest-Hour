@@ -77,7 +77,7 @@ class GameStateManager:
         print(f"Game saved as: {save_name}.json")     
 
     def new_game(self, *args, **kwargs):
-        load_map = pygame.image.load('map_upscaled.png') # will be picked from a list of maps in the future
+        load_map = pygame.image.load('map_italy.png') # will be picked from a list of maps in the future
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
         load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size)
@@ -87,7 +87,7 @@ class GameStateManager:
 
         self._instance.grid = load_grid
         self._instance.save_map = load_map
-        self._instance.map_name = 'map_upscaled.png' # will be picked from a list of maps in the future
+        self._instance.map_name = 'map_italy.png' # will be picked from a list of maps in the future
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
@@ -105,7 +105,7 @@ class GameStateManager:
         load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size)
         
         # populate the cell makeup
-        self._scan_map(load_grid, load_map, 20)
+        self._scan_map(load_grid, load_map, 50)
 
         # replace cells in load_grid with cells saved in save_grid
         for cell in save_grid:
@@ -134,8 +134,8 @@ class GameStateManager:
     # private methods
     def _scan_map(self, grid, load_map, band_factor):
         # Colors
-        WATER = (235, 235, 235)  # Blue
-        LAND = (35, 226, 84)  # Green
+        WATER = (0, 168, 243)  # Blue
+        LAND = (14, 209, 69)  # Green
         SHORELINE = (0, 0, 0)  # Black
 
         def color_in_band(color1, color2, band_factor):
