@@ -15,7 +15,7 @@ class UIManager:
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
             cls._instance.buttons = []
-            cls._instance.camera = Camera(zoom=3)
+            cls._instance.camera = Camera(zoom=3, max_zoom=3, min_zoom=1)
         return cls._instance
     
     def update(self, events):
