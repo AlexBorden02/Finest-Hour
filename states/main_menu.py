@@ -10,7 +10,7 @@ def main_menu(screen, game_state_manager):
         Button('New Game', 100, 100, 200, 50, BLUE, game_state_manager.new_game),
         Button('Load Game', 100, 200, 200, 50, BLUE, game_state_manager.load_game, 'save1'),
         Button('Settings', 100, 300, 200, 50, BLUE),
-        Button('Quit', 100, 400, 200, 50, BLUE)
+        Button('Quit', 100, 400, 200, 50, BLUE, game_state_manager.quit)
     ]
     for button in buttons:
         button.render(screen)

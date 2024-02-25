@@ -77,17 +77,17 @@ class GameStateManager:
         print(f"Game saved as: {save_name}.json")     
 
     def new_game(self, *args, **kwargs):
-        load_map = pygame.image.load('map_italy.png') # will be picked from a list of maps in the future
+        load_map = pygame.image.load('test_map.png') # will be picked from a list of maps in the future
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
-        load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size)
+        load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size, self._instance)
         
         # populate the cell makeup
         self._scan_map(load_grid, load_map, 20)
 
         self._instance.grid = load_grid
         self._instance.save_map = load_map
-        self._instance.map_name = 'map_italy.png' # will be picked from a list of maps in the future
+        self._instance.map_name = 'test_map.png' # will be picked from a list of maps in the future
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
@@ -102,7 +102,7 @@ class GameStateManager:
         load_map = pygame.image.load(save_map)
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
-        load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size)
+        load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size, self._instance)
         
         # populate the cell makeup
         self._scan_map(load_grid, load_map, 50)
@@ -135,7 +135,7 @@ class GameStateManager:
     def _scan_map(self, grid, load_map, band_factor):
         # Colors
         WATER = (0, 168, 243)  # Blue
-        LAND = (14, 209, 69)  # Green
+        LAND = (16, 216, 0)  # Green
         SHORELINE = (0, 0, 0)  # Black
 
         def color_in_band(color1, color2, band_factor):
@@ -170,4 +170,8 @@ class GameStateManager:
             else:
                 cell.set_type('land')
         return True
+    
+    def quit(self, *args, **kwargs):
+        pygame.quit()
+        quit()
 

@@ -22,11 +22,7 @@ def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN
     # # Draw a circle at the calculated position
     # pygame.draw.circle(visible_surface, (255, 0, 0), circle_pos, 50)
 
-    # draw selected cell
-    selected_cell = game_state_manager.ui_manager.get_selected_cell()
-    if selected_cell:
-        cell_pos = (selected_cell.rect.x - visible_rect.x, selected_cell.rect.y - visible_rect.y)
-        pygame.draw.rect(visible_surface, (0, 255, 0), (cell_pos[0], cell_pos[1], game_state_manager.grid.get_cell_size(), game_state_manager.grid.get_cell_size()), 1)
+    game_state_manager.grid.render(visible_rect, visible_surface, camera)
 
     # Scale the visible surface to the screen size
     scaled_surface = pygame.transform.scale(visible_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -35,8 +31,8 @@ def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN
 
     # draw selected cell makeup in top left corner
     font = pygame.font.Font(None, 36)
-    if selected_cell:
-        text = font.render(str(selected_cell.cell_makeup), True, (0, 0, 0))
+    if game_state_manager.ui_manager.get_selected_cell():
+        text = font.render(str(game_state_manager.ui_manager.get_selected_cell().cell_makeup), True, (0, 0, 0))
         screen.blit(text, (10, 10))
 
     isSelected = lambda window: window.selected.__str__()
