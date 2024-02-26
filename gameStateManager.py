@@ -28,6 +28,9 @@ class GameStateManager:
     def get_state(self):
         return self._instance.state
     
+    def get_player(self):
+        return self._instance.player
+    
     def set_state(self, new_state):
         self._instance.state = new_state
         print(f"Game state changed to: {self._instance.state}")

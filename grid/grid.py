@@ -58,10 +58,20 @@ class Grid:
 
         claimed_cells = self.get_claimed_cells()
         for cell in claimed_cells:
+            cell_color = self.game_state_manager.get_player().get_color()
             if cell.border:
-                cell_pos = (cell.rect.x - visible_rect.x, cell.rect.y - visible_rect.y)
-                pygame.draw.rect(screen, (255, 0, 0), (cell_pos[0], cell_pos[1], self.game_state_manager.grid.get_cell_size(), self.game_state_manager.grid.get_cell_size()), 1)
-
+                # draw exposed edges
+                for edge, exposed in cell.exposed_edges.items():
+                    if exposed:
+                        edge_pos = (cell.rect.x - visible_rect.x, cell.rect.y - visible_rect.y)
+                        if edge == 'top':
+                            pygame.draw.line(screen, cell_color, edge_pos, (edge_pos[0] + self.cell_size, edge_pos[1]), 1)
+                        elif edge == 'right':
+                            pygame.draw.line(screen, cell_color, (edge_pos[0] + self.cell_size, edge_pos[1]), (edge_pos[0] + self.cell_size, edge_pos[1] + self.cell_size), 1)
+                        elif edge == 'bottom':
+                            pygame.draw.line(screen, cell_color, (edge_pos[0], edge_pos[1] + self.cell_size), (edge_pos[0] + self.cell_size, edge_pos[1] + self.cell_size), 1)
+                        elif edge == 'left':
+                            pygame.draw.line(screen, cell_color, edge_pos, (edge_pos[0], edge_pos[1] + self.cell_size), 1)
             
 
     def get_claimed_cells(self):
