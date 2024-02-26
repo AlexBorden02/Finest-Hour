@@ -4,6 +4,7 @@ from states.main_menu import main_menu
 from states.game import game_interface
 from settings import hidden_variables as settings
 from grid.grid import Grid
+from player import Player
 
 import pygame
 import json
@@ -17,6 +18,7 @@ class GameStateManager:
             # Initial game state
             cls._instance.state = 'main_menu'
             cls._instance.ui_manager = UIManager(cls._instance)
+            cls._instance.player = Player()
             cls._instance.grid = grid
             cls._instance.save_map = save_map
             cls._instance.map_name = None
@@ -56,16 +58,17 @@ class GameStateManager:
                 'map_height': self._instance.grid.height
             },
             'grid': {
-                # Loop through the current grid and save any "modified" cells
+                # Loop through the current grid and save any "claimed" cells
                 'cells': [
                     {
                         'id': cell.id,
                         'cell_makeup': cell.cell_makeup,
                         'cell_type': cell.cell_type,
-                        'modified': cell.modified,
+                        'claimed': cell.claimed,
+                        'owner': cell.owner if cell.claimed else 'None'
                         # add other cell attributes here
                     }
-                    for cell in self._instance.grid.cells if cell.modified
+                    for cell in self._instance.grid.cells if cell.claimed
                 ]
             }
         }
@@ -111,9 +114,11 @@ class GameStateManager:
         for cell in save_grid:
             cell_id = tuple(cell['id'])  # Convert list to tuple
             load_cell = load_grid.get_cell_by_id(cell_id)
-            load_cell.cell_makeup = cell['cell_makeup']
-            load_cell.cell_type = cell['cell_type']
-            load_cell.modified = cell['modified']
+            load_cell.set_makeup(cell['cell_makeup'])
+            load_cell.set_type(cell['cell_type'])
+            if cell['claimed']:
+                load_cell.set_claimed(True)
+                load_cell.set_owner(cell['owner'])
             # will load other cell attributes here
 
         self._instance.grid = load_grid

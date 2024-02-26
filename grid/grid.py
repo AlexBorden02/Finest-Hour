@@ -8,7 +8,7 @@ class Grid:
         self.width = width
         self.height = height
         self.cell_size = cell_size
-        self.cells = [Cell(x, y, cell_size) for x in range(0, width, cell_size) for y in range(0, height, cell_size)]
+        self.cells = [Cell(x, y, cell_size, self) for x in range(0, width, cell_size) for y in range(0, height, cell_size)]
         self.game_state_manager = game_state_manager
 
     def get_cell(self, pos, camera):
@@ -35,9 +35,17 @@ class Grid:
                     neighbors.append(neighbor)
         return neighbors
     
-    def unselect_all(self):
-        for cell in self.cells:
-            cell.selected = False
+    def get_edge_neighbors(self, cell):
+        neighbors = []
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x == 0 and y == 0:
+                    continue
+                if x == 0 or y == 0:
+                    neighbor = self.get_cell_by_id((cell.id[0] + x, cell.id[1] + y))
+                    if neighbor:
+                        neighbors.append(neighbor)
+        return neighbors
 
     def get_cell_size(self):
         return self.cell_size
@@ -48,20 +56,23 @@ class Grid:
             cell_pos = (cell.rect.x - visible_rect.x, cell.rect.y - visible_rect.y)
             pygame.draw.rect(screen, (0, 255, 0), (cell_pos[0], cell_pos[1], self.game_state_manager.grid.get_cell_size(), self.game_state_manager.grid.get_cell_size()), 1)
 
-        modified_cells = self.get_modified_cells()
-        for cell in modified_cells:
-            cell_pos = (cell.rect.x - visible_rect.x, cell.rect.y - visible_rect.y)
-            pygame.draw.rect(screen, (255, 0, 0), (cell_pos[0], cell_pos[1], self.game_state_manager.grid.get_cell_size(), self.game_state_manager.grid.get_cell_size()), 1)
-        
-    def get_modified_cells(self):
-        return [cell for cell in self.cells if cell.modified]
+        claimed_cells = self.get_claimed_cells()
+        for cell in claimed_cells:
+            if cell.border:
+                cell_pos = (cell.rect.x - visible_rect.x, cell.rect.y - visible_rect.y)
+                pygame.draw.rect(screen, (255, 0, 0), (cell_pos[0], cell_pos[1], self.game_state_manager.grid.get_cell_size(), self.game_state_manager.grid.get_cell_size()), 1)
+
+            
+
+    def get_claimed_cells(self):
+        return [cell for cell in self.cells if cell.claimed]
     
-    def clump_modified_cells(self):
+    def clump_claimed_cells(self):
         visited = set()
         clumps = []
 
         def dfs(cell):
-            if cell in visited or not cell.modified:
+            if cell in visited or not cell.claimed:
                 return []
             visited.add(cell)
             clump = [cell]
@@ -70,7 +81,7 @@ class Grid:
             return clump
 
         for cell in self.cells:
-            if cell.modified and cell not in visited:
+            if cell.claimed and cell not in visited:
                 clumps.append(dfs(cell))
 
         return clumps

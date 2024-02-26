@@ -61,7 +61,7 @@ class UIManager:
                         window_pos = event.pos
                         cell = self._instance.game_state_manager.grid.get_cell(window_pos, self.get_camera())
                         if cell:
-                            cell.set_modified(True)
+                            self._instance.game_state_manager.player.claim_cell(cell)
                                 
 
     def get_camera(self):
