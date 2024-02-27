@@ -1,8 +1,8 @@
 import pygame
 
-class Player:
-    def __init__(self, name= None, color=(255, 255, 255)):
-        self.player_id = id(self)
+class Computer:
+    def __init__(self, name=None, color=(255, 255, 255)):
+        self.computer_id = id(self)
         self.name = name
         self.color = color
         self.claimed_cells = []
@@ -10,14 +10,14 @@ class Player:
     def claim_cell(self, cell):
         cell.set_claimed(True)
         self.claimed_cells.append(cell)
-        cell.set_owner(self.player_id)
+        cell.set_owner(self.computer_id)
 
     def unclaim_cell(self, cell):
         cell.unclaim()
         self.claimed_cells.remove(cell)
 
-    def get_player_id(self):
-        return self.player_id
+    def get_computer_id(self):
+        return self.computer_id
     
     def get_name(self):
         return self.name

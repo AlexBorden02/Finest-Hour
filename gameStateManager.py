@@ -5,6 +5,7 @@ from states.game import game_interface
 from settings import hidden_variables as settings
 from grid.grid import Grid
 from player import Player
+from computer import Computer
 
 import pygame
 import json
@@ -22,7 +23,7 @@ class GameStateManager:
             cls._instance.grid = grid
             cls._instance.save_map = save_map
             cls._instance.map_name = None
-
+            cls._instance.npcs = []
         return cls._instance
 
     def get_state(self):
@@ -61,20 +62,40 @@ class GameStateManager:
                 'map_width': self._instance.grid.width,
                 'map_height': self._instance.grid.height
             },
-            'grid': {
-                # Loop through the current grid and save any "claimed" cells
-                'cells': [
-                    {
-                        'id': cell.id,
-                        'cell_makeup': cell.cell_makeup,
-                        'cell_type': cell.cell_type,
-                        'claimed': cell.claimed,
-                        'owner': cell.owner if cell.claimed else 'None'
-                        # add other cell attributes here
+            'player': {
+                'grid': {
+                    'claimed_cells': [
+                        {
+                            'id': cell.id,
+                            'cell_makeup': cell.cell_makeup,
+                            'cell_type': cell.cell_type,
+                            'claimed': cell.claimed,
+                            'owner': cell.owner if cell.claimed else 'None'
+                            # add other cell attributes here
+                        }
+                        for cell in self._instance.grid.cells if cell.claimed and cell.owner == self._instance.get_player().get_player_id()
+                    ]
+                }
+            },
+            'npcs': [
+                {
+                    'npc_id': npc.get_computer_id(),
+                    'grid': {
+                        'claimed_cells': [
+                            {
+                                'id': cell.id,
+                                'cell_makeup': cell.cell_makeup,
+                                'cell_type': cell.cell_type,
+                                'claimed': cell.claimed,
+                                'owner': cell.owner if cell.claimed else 'None'
+                                # add other cell attributes here
+                            }
+                            for cell in self._instance.grid.cells if cell.claimed and cell.owner == npc.get_computer_id()
+                        ]
                     }
-                    for cell in self._instance.grid.cells if cell.claimed
-                ]
-            }
+                }
+                for npc in self._instance.npcs
+            ]
         }
 
         # Serialize the data to a JSON file
@@ -84,7 +105,7 @@ class GameStateManager:
         print(f"Game saved as: {save_name}.json")     
 
     def new_game(self, *args, **kwargs):
-        load_map = pygame.image.load('test_map.png') # will be picked from a list of maps in the future
+        load_map = pygame.image.load('map_italy.png') # will be picked from a list of maps in the future
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
         load_grid = Grid(load_map.get_rect().width, load_map.get_rect().height, cell_size, self._instance)
@@ -94,7 +115,8 @@ class GameStateManager:
 
         self._instance.grid = load_grid
         self._instance.save_map = load_map
-        self._instance.map_name = 'test_map.png' # will be picked from a list of maps in the future
+        self._instance.map_name = 'map_italy.png' # will be picked from a list of maps in the future
+        self._instance.npcs.append(Computer(color=(255, 0, 0)))
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
@@ -104,9 +126,15 @@ class GameStateManager:
             save_file = json.load(f)
 
         save_map = save_file['map']['map_name']
-        save_grid = save_file['grid']['cells']
+        saved_player_data = save_file['player']
+        saved_npc_data = save_file['npcs']
 
         self._instance.player.player_id = save_file['player_id']
+
+        for npc in saved_npc_data:
+            computer = Computer()
+            computer.computer_id = npc['npc_id']
+            self._instance.npcs.append(computer)
 
         load_map = pygame.image.load(save_map)
 
@@ -117,23 +145,32 @@ class GameStateManager:
         self._scan_map(load_grid, load_map, 50)
 
         # replace cells in load_grid with cells saved in save_grid
-        for cell in save_grid:
+        for cell in saved_player_data['grid']['claimed_cells']:
             cell_id = tuple(cell['id'])  # Convert list to tuple
             load_cell = load_grid.get_cell_by_id(cell_id)
             load_cell.set_makeup(cell['cell_makeup'])
             load_cell.set_type(cell['cell_type'])
-            if cell['claimed']:
-                #load_cell.set_claimed(True)
-                #load_cell.set_owner(cell['owner'])
-                self._instance.get_player().claim_cell(load_cell)
-                # need to find way of storing different players territory to file
-            # will load other cell attributes here
+            self._instance.player.claim_cell(load_cell)
+
+        for npc in saved_npc_data:
+            computer = Computer()
+            computer.computer_id = npc['npc_id']
+            self._instance.npcs.append(computer)
+
+            for cell in npc['grid']['claimed_cells']:
+                cell_id = tuple(cell['id'])  # Convert list to tuple
+                load_cell = load_grid.get_cell_by_id(cell_id)
+                load_cell.set_makeup(cell['cell_makeup'])
+                load_cell.set_type(cell['cell_type'])
+                computer.claim_cell(load_cell)
 
         self._instance.grid = load_grid
         self._instance.save_map = load_map
         self._instance.map_name = save_map
         
-        return self._instance.set_state('game')
+        self._instance.set_state('game')
+        # move camera to mid point of map
+        self._instance.get_ui_manager().get_camera().set_camera_position(load_map.get_rect().width/2, load_map.get_rect().height/2)
     
     def get_save_map(self):
         return self._instance.save_map
@@ -188,3 +225,6 @@ class GameStateManager:
         pygame.quit()
         quit()
 
+    def add_computer(self, computer):
+        self._instance.npcs.append(computer)
+        

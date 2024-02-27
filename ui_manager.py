@@ -14,6 +14,7 @@ class UIManager:
             cls._instance.game_state_manager = game_state_manager
             cls._instance.selected_cell = None
             cls._instance.selected_window = None
+            cls._instance.selected_clump = None
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
             cls._instance.buttons = []
@@ -39,6 +40,8 @@ class UIManager:
                     self._instance.add_popup_window(pauseMenu)
                 if event.key == pygame.K_m:
                     self._instance.add_popup_window(testPopup)
+                if event.key == pygame.K_e:
+                    self._instance.game_state_manager.npcs[0].claim_cell(self._instance.selected_cell)
                 # if ctrl + s is pressed, save the game
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     self._instance.game_state_manager.save_game("save1")
@@ -73,7 +76,7 @@ class UIManager:
                                 self._instance.game_state_manager.player.unclaim_cell(cell)
                             else:
                                 self._instance.game_state_manager.player.claim_cell(cell)
-                                
+                 
 
     def get_camera(self):
         return self._instance.camera
@@ -83,6 +86,10 @@ class UIManager:
     
     def set_selected_cell(self, cell):
         self._instance.selected_cell = cell
+        if cell is not None:
+            self._instance.selected_clump = self._instance.game_state_manager.grid.get_clump(cell)
+        else:
+            self._instance.selected_clump = None
         return self._instance.selected_cell
     
     def get_selected_window(self):
@@ -91,6 +98,13 @@ class UIManager:
     def set_selected_window(self, window):
         self._instance.selected_window = window
         return self._instance.selected_window
+    
+    def get_selected_clump(self):
+        return self._instance.selected_clump
+    
+    def set_selected_clump(self, clump):
+        self._instance.selected_clump = clump
+        return self._instance.selected_clump
     
     def get_mouse_down_pos(self):
         return self._instance.mouse_down_pos

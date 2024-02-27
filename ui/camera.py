@@ -63,3 +63,9 @@ class Camera:
     
     def unapply(self, pos):
         return ((pos[0] - self.offset.x) / self.zoom, (pos[1] - self.offset.y) / self.zoom)
+    
+    def set_camera_position(self, x, y):
+        self.offset = pygame.Vector2(-x, -y)
+
+    def get_camera_position(self):
+        return self.offset
