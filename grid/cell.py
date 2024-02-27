@@ -43,7 +43,7 @@ class Cell:
         return self.claimed
     
     def __str__(self):
-        return f'Cell: {self.id}: {self.cell_type} {self.claimed} {self.border} {self.owner}'
+        return f'Cell: {self.id}: Claimed:{self.claimed} Owner: {self.owner}'
     
     def set_claimed(self, claimed):
         self.claimed = claimed
@@ -86,3 +86,7 @@ class Cell:
 
 
         return self.exposed_edges
+    
+    def unclaim(self):
+        self.set_claimed(False)
+        self.set_owner(None)

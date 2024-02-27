@@ -8,7 +8,7 @@ from grid.grid import Grid
 pygame.init()
 
 # Screen dimensions
-SCREEN_WIDTH, SCREEN_HEIGHT = 1600, 900
+SCREEN_WIDTH, SCREEN_HEIGHT = 1280, 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Basic setup for menu and game states
@@ -25,5 +25,3 @@ while True:
     game_state_manager.run(screen, game_state_manager, camera, events, SCREEN_WIDTH, SCREEN_HEIGHT)
     
     pygame.display.flip()
-
-    

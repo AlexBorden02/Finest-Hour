@@ -54,6 +54,7 @@ class GameStateManager:
         # Prepare the data to be saved
         save_data = {
             'save_name': save_name,
+            'player_id': self._instance.get_player().get_player_id(),
             'map': {
                 # map details to be added later
                 'map_name': self._instance.map_name,
@@ -105,6 +106,8 @@ class GameStateManager:
         save_map = save_file['map']['map_name']
         save_grid = save_file['grid']['cells']
 
+        self._instance.player.player_id = save_file['player_id']
+
         load_map = pygame.image.load(save_map)
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
@@ -120,8 +123,10 @@ class GameStateManager:
             load_cell.set_makeup(cell['cell_makeup'])
             load_cell.set_type(cell['cell_type'])
             if cell['claimed']:
-                load_cell.set_claimed(True)
-                load_cell.set_owner(cell['owner'])
+                #load_cell.set_claimed(True)
+                #load_cell.set_owner(cell['owner'])
+                self._instance.get_player().claim_cell(load_cell)
+                # need to find way of storing different players territory to file
             # will load other cell attributes here
 
         self._instance.grid = load_grid

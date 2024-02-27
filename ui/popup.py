@@ -82,4 +82,6 @@ class PopupWindow:
                 self.dragging = False
                 return False
 
-                        
+    def add_button(self, button):
+        self.buttons.append(button)        
+        

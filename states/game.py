@@ -35,8 +35,6 @@ def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN
         text = font.render(str(game_state_manager.ui_manager.get_selected_cell().__str__()), True, (0, 0, 0))
         screen.blit(text, (10, 10))
 
-    isSelected = lambda window: window.selected.__str__()
-
     text = font.render(game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
     screen.blit(text, (10, 50))
             

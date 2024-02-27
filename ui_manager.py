@@ -2,6 +2,8 @@
 import pygame
 from ui.camera import Camera
 from ui.popup import PopupWindow
+from ui.button import Button
+
 
 class UIManager:
     _instance = None
@@ -17,8 +19,12 @@ class UIManager:
             cls._instance.buttons = []
             cls._instance.camera = Camera(zoom=3, max_zoom=3, min_zoom=1)
         return cls._instance
+        
     
     def update(self, events):
+        testPopup = PopupWindow(self._instance.game_state_manager, 400, 400, 200, 200, "test")
+        testPopup.add_button(Button("test", 50, 50, 50, 50, (255, 0, 0)))
+
         for event in events:
             window_interaction = any(window.handle_event(event) for window in self._instance.popup_windows)
             button_interaction = any(button.handle_event(event) for button in self._instance.buttons)
@@ -28,9 +34,11 @@ class UIManager:
                 exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self._instance.game_state_manager.set_state('main_menu')
+                    pauseMenu = PopupWindow(self._instance.game_state_manager, 500, 200, 200, 500)
+                    pauseMenu.add_button(Button("Main menu", 50, 250, 100, 50, (255, 0, 0), self._instance.game_state_manager.set_state, 'main_menu'))
+                    self._instance.add_popup_window(pauseMenu)
                 if event.key == pygame.K_m:
-                    self._instance.add_popup_window(PopupWindow(self._instance.game_state_manager, 400, 400, 200, 200, "This is a test popup window"))
+                    self._instance.add_popup_window(testPopup)
                 # if ctrl + s is pressed, save the game
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_CTRL:
                     self._instance.game_state_manager.save_game("save1")
@@ -61,7 +69,10 @@ class UIManager:
                         window_pos = event.pos
                         cell = self._instance.game_state_manager.grid.get_cell(window_pos, self.get_camera())
                         if cell:
-                            self._instance.game_state_manager.player.claim_cell(cell)
+                            if cell.claimed:
+                                self._instance.game_state_manager.player.unclaim_cell(cell)
+                            else:
+                                self._instance.game_state_manager.player.claim_cell(cell)
                                 
 
     def get_camera(self):
