@@ -80,6 +80,7 @@ class GameStateManager:
             'npcs': [
                 {
                     'npc_id': npc.get_computer_id(),
+                    'color': npc.get_color(), 
                     'grid': {
                         'claimed_cells': [
                             {
@@ -131,11 +132,6 @@ class GameStateManager:
 
         self._instance.player.player_id = save_file['player_id']
 
-        for npc in saved_npc_data:
-            computer = Computer()
-            computer.computer_id = npc['npc_id']
-            self._instance.npcs.append(computer)
-
         load_map = pygame.image.load(save_map)
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
@@ -155,6 +151,7 @@ class GameStateManager:
         for npc in saved_npc_data:
             computer = Computer()
             computer.computer_id = npc['npc_id']
+            computer.color = npc['color']
             self._instance.npcs.append(computer)
 
             for cell in npc['grid']['claimed_cells']:
