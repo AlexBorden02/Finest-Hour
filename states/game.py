@@ -5,6 +5,7 @@ import sys
 sys.path.append('..')
 from ui.popup import PopupWindow
 from ui.button import Button
+from ui.element import element
 
 def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN_WIDTH, SCREEN_HEIGHT):
     # Calculate the visible portion of the map
@@ -37,4 +38,10 @@ def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN
 
     text = font.render(game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
     screen.blit(text, (10, 50))
+
+    # left toolbar
+    left_toolbar = element(0, 0, 100, SCREEN_HEIGHT, (200, 200, 200))
+
+
+
             

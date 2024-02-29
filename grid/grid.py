@@ -105,7 +105,7 @@ class Grid:
     
     def get_clump(self, cell):
         for representative, clump in self.clump_cache.items():
-            if cell in clump:
+            if cell in clump and cell.claimed:  # Check if the cell is claimed
                 return clump
 
         visited = set()
@@ -118,7 +118,7 @@ class Grid:
 
         dfs(cell)
         self.clump_cache[cell] = visited
-        return visited
+        return visited if cell.claimed else None  # Return None if the cell is not claimed
 
     def invalidate_clump_cache(self, cell=None): # remember to invoke this method when a territory expands
         if cell:

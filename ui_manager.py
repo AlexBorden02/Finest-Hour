@@ -18,6 +18,7 @@ class UIManager:
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
             cls._instance.buttons = []
+            cls._instance.elements = []
             cls._instance.camera = Camera(zoom=3, max_zoom=3, min_zoom=1)
         return cls._instance
         
@@ -29,6 +30,7 @@ class UIManager:
         for event in events:
             window_interaction = any(window.handle_event(event) for window in self._instance.popup_windows)
             button_interaction = any(button.handle_event(event) for button in self._instance.buttons)
+            element_interaction = any(element.handle_event(event) for element in self._instance.elements)
             
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -47,7 +49,7 @@ class UIManager:
                     self._instance.game_state_manager.save_game("save1")
             # essentially just checking if the mouse is not interacting with a window or button
             # if it is not, then the camera should handle the event
-            if not window_interaction and not button_interaction:
+            if not window_interaction and not button_interaction and not element_interaction:
                 self._instance.camera.handle_event(event)
                     
                 # mouse button down
