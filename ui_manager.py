@@ -150,13 +150,9 @@ class UIManager:
             element.render(screen)
 
     def render(self, screen):
+        self._instance.render_elements(screen)
         self._instance.render_popup_windows(screen)
         self._instance.render_buttons(screen)
-        self._instance.render_elements(screen)
-        # if self._instance.selected_cell:
-        #     self._instance.selected_cell.render(screen, self._instance.camera)
-        # pygame.display.flip()
-        # pygame.display.update()
 
     def add_element(self, element):
         self._instance.elements.append(element)

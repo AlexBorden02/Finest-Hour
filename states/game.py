@@ -40,8 +40,17 @@ def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN
     screen.blit(text, (10, 50))
 
     # left toolbar
-    left_toolbar = Element(0, 0, 100, SCREEN_HEIGHT, (200, 200, 200))
+    left_toolbar = Element(0, 100, 50, SCREEN_HEIGHT-200, (200, 200, 200))
     game_state_manager.ui_manager.add_element(left_toolbar)
+
+    # left toolbar buttons
+    x = 10
+    y = 110
+    padding = 10
+    button_width = 30
+    button_height = 30
+    button_color = (100, 100, 100)
+    left_toolbar.add_button(Button("test", x, y, button_width, button_height, button_color, print, "test", parent=left_toolbar))
 
 
 
