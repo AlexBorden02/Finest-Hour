@@ -12,6 +12,10 @@ class Computer:
         self.claimed_cells.append(cell)
         cell.set_owner(self.computer_id)
 
+    def claim_cells(self, cells):
+        for cell in cells:
+            self.claim_cell(cell)
+
     def unclaim_cell(self, cell):
         cell.unclaim()
         self.claimed_cells.remove(cell)

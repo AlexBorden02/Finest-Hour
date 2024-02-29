@@ -8,6 +8,18 @@ from ui.popup import PopupWindow
 from ui.button import Button
 from ui.element import Element
 
+def expand_territory(game_state_manager):
+    selected_cell = game_state_manager.ui_manager.get_selected_cell()
+    if selected_cell is not None and selected_cell.get_owner() is not None:
+        if selected_cell.get_owner() == game_state_manager.player.get_player_id():
+            return game_state_manager.player.claim_cells(game_state_manager.grid.get_random_expansion_cells(game_state_manager.player.claimed_cells, 5, "land"))
+        else:
+            # must be an npc
+            # find the npc that owns the cell
+            for npc in game_state_manager.npcs:
+                if selected_cell.get_owner() == npc.get_computer_id():
+                    return npc.claim_cells(game_state_manager.grid.get_random_expansion_cells(npc.claimed_cells, 5, "land"))
+                
 class GameInterface:
     def __init__(self, game_state_manager, world_map):
         self.screen = pygame.display.get_surface()
@@ -23,10 +35,7 @@ class GameInterface:
         self.left_toolbar.add_button(Button("RL", 10, 150, 30, 30, (100, 100, 100), 
             callback=lambda _: game_state_manager.ui_manager.set_selected_cell(game_state_manager.grid.get_random_cell(cell_type="land")), 
             parent=self.left_toolbar))
-        self.left_toolbar.add_button(Button("ET", 10, 190, 30, 30, (100, 100, 100), 
-            # call get_random_expansion_cells and iterate over them claiming them with player
-            callback=lambda _: game_state_manager.player.claim_cells(game_state_manager.grid.get_random_expansion_cells(game_state_manager.player.claimed_cells, 5, "land")),
-            parent=self.left_toolbar))
+        self.left_toolbar.add_button(Button("ET", 10, 190, 30, 30, (100, 100, 100), expand_territory, game_state_manager, parent=self.left_toolbar))
         
         self.game_state_manager.ui_manager.add_element(self.left_toolbar)
 
@@ -54,5 +63,5 @@ class GameInterface:
             text = font.render(str(self.game_state_manager.ui_manager.get_selected_cell().__str__()), True, (0, 0, 0))
             self.screen.blit(text, (10, 10))
 
-        text = font.render(self.game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
-        self.screen.blit(text, (10, 50))
+        #text = font.render(self.game_state_manager.ui_manager.get_selected_cell().get_owner() or None, True, (0, 0, 0))
+        #self.screen.blit(text, (10, 50))
