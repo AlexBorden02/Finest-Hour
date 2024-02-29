@@ -51,7 +51,7 @@ class GameStateManager:
             game_state_manager.get_ui_manager().update(events)
             game_state_manager.get_ui_manager().render(screen)
 
-    def save_game(self, save_name):
+    def save_game(self, save_name, *args, **kwargs):
         # Prepare the data to be saved
         save_data = {
             'save_name': save_name,
@@ -118,6 +118,7 @@ class GameStateManager:
         self._instance.save_map = load_map
         self._instance.map_name = 'map_italy.png' # will be picked from a list of maps in the future
         self._instance.npcs.append(Computer(color=(255, 0, 0)))
+        self._instance.ui_manager.reset()
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
@@ -165,6 +166,7 @@ class GameStateManager:
         self._instance.save_map = load_map
         self._instance.map_name = save_map
         
+        self._instance.ui_manager.reset()
         self._instance.set_state('game')
         # move camera to mid point of map
         self._instance.get_ui_manager().get_camera().set_camera_position(load_map.get_rect().width/2, load_map.get_rect().height/2)

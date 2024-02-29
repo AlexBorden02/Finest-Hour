@@ -20,6 +20,8 @@ class UIManager:
             cls._instance.buttons = []
             cls._instance.elements = []
             cls._instance.camera = Camera(zoom=3, max_zoom=3, min_zoom=1)
+            cls._instance.screen_width = 1280
+            cls._instance.screen_height = 720
         return cls._instance
         
     
@@ -157,7 +159,21 @@ class UIManager:
     def add_element(self, element):
         self._instance.elements.append(element)
         return self._instance.elements
-
+    
+    def remove_all_popup_windows(self):
+        self._instance.popup_windows = []
+        return self._instance.popup_windows
+    
+    def reset(self):
+        self._instance.selected_cell = None
+        self._instance.selected_window = None
+        self._instance.selected_clump = None
+        self._instance.mouse_down_pos = None
+        self._instance.popup_windows = []
+        self._instance.buttons = []
+        self._instance.elements = []
+        self._instance.camera = Camera(zoom=3, max_zoom=3, min_zoom=1)
+        return self._instance
     
     
     
