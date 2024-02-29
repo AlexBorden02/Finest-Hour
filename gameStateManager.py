@@ -107,6 +107,8 @@ class GameStateManager:
         print(f"Game saved as: {save_name}.json")     
 
     def new_game(self, *args, **kwargs):
+        self._instance.reset()
+        print("Starting new game")
         load_map = pygame.image.load('map_italy.png') # will be picked from a list of maps in the future
 
         cell_size = settings['cell_size'] # will be a map dependent setting in the future
@@ -124,6 +126,7 @@ class GameStateManager:
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
+        self._instance.reset()
         print(f"Loading game from: {save_file_name}.json")
         # Open the JSON file and load its content
         with open(f'{save_file_name}.json', 'r') as f:
@@ -229,4 +232,11 @@ class GameStateManager:
 
     def add_computer(self, computer):
         self._instance.npcs.append(computer)
+
+    def reset(self):
+        self._instance.player = Player()
+        self._instance.grid = None
+        self._instance.save_map = None
+        self._instance.map_name = None
+        self._instance.npcs = []
         

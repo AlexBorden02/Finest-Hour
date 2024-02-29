@@ -18,11 +18,18 @@ class GameInterface:
         self.world_map = world_map
 
         self.left_toolbar = Element(0, 100, 50, 720-200, (200, 200, 200))
-        self.left_toolbar.add_button(Button("save", 10, 110, 30, 30, (100, 100, 100), callback=self.game_state_manager.save_game, callback_args="save1", parent=self.left_toolbar))
 
+        self.left_toolbar.add_button(Button("save", 10, 110, 30, 30, (100, 100, 100), callback=self.game_state_manager.save_game, callback_args="save1", parent=self.left_toolbar))
+        self.left_toolbar.add_button(Button("RL", 10, 150, 30, 30, (100, 100, 100), 
+            callback=lambda _: game_state_manager.ui_manager.set_selected_cell(game_state_manager.grid.get_random_cell(cell_type="land")), 
+            parent=self.left_toolbar))
+        self.left_toolbar.add_button(Button("ET", 10, 190, 30, 30, (100, 100, 100), 
+            # call get_random_expansion_cells and iterate over them claiming them with player
+            callback=lambda _: game_state_manager.player.claim_cells(game_state_manager.grid.get_random_expansion_cells(game_state_manager.player.claimed_cells, 5, "land")),
+            parent=self.left_toolbar))
+        
         self.game_state_manager.ui_manager.add_element(self.left_toolbar)
 
-    @memory_profiler.profile
     def run(self):
         # Calculate the visible portion of the map
         visible_rect = pygame.Rect(-self.camera.offset.x / self.camera.zoom, -self.camera.offset.y / self.camera.zoom, self.SCREEN_WIDTH / self.camera.zoom, self.SCREEN_HEIGHT / self.camera.zoom)

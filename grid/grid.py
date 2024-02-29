@@ -129,5 +129,39 @@ class Grid:
         else:
             self.clump_cache = {}
 
-    def get_random_cell(self):
-        return random.choice(self.cells)
+    def get_random_cell(self, cell_type=None, claimed=None, border=None, owner=None):
+        cells = [cell for cell in self.cells if (cell_type is None or cell.cell_type == cell_type) and (claimed is None or cell.claimed == claimed) and (border is None or cell.border == border) and (owner is None or cell.owner == owner)]
+        return random.choice(cells) if cells else None
+
+    def get_random_border_cells(self, cell_chunk, amount, cell_type=None):
+        border_cells = [cell for cell in cell_chunk if cell.border and (cell_type is None or cell.cell_type == cell_type)]
+        if len(border_cells) < amount:
+            return border_cells
+        else:
+            return random.sample(border_cells, amount)
+
+    def get_random_expansion_cells(self, cell_chunk, amount, cell_type=None):
+        # get all border cells
+        border_cells = [cell for cell in cell_chunk if cell.border and (cell_type is None or cell.cell_type == cell_type)]
+        cells = []
+        if len(border_cells) < amount:
+            amount = len(border_cells)
+        for i in range(amount):
+            # get a random border cell
+            cell = random.choice(border_cells)
+            # get all neighbors
+            neighbors = self.get_neighbors(cell)
+            # get all unclaimed neighbors
+            unclaimed_neighbors = [neighbor for neighbor in neighbors if not neighbor.claimed]
+            # if there are no unclaimed neighbors, remove cell from border_cells and try again
+            if not unclaimed_neighbors:
+                border_cells.remove(cell)
+                continue
+            # get a random unclaimed neighbor
+            unclaimed_neighbor = random.choice(unclaimed_neighbors)
+            # add unclaimed neighbor to cells
+            cells.append(unclaimed_neighbor)
+            # remove cell from border_cells
+            print(border_cells)
+            border_cells.remove(cell)
+        return cells
