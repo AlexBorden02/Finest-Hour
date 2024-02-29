@@ -1,57 +1,51 @@
 
 import pygame
 import sys
+import memory_profiler 
 
 sys.path.append('..')
 from ui.popup import PopupWindow
 from ui.button import Button
 from ui.element import Element
 
-def game_interface(screen, game_state_manager, camera, events, world_map, SCREEN_WIDTH, SCREEN_HEIGHT):
-    # Calculate the visible portion of the map
-    visible_rect = pygame.Rect(-camera.offset.x / camera.zoom, -camera.offset.y / camera.zoom, SCREEN_WIDTH / camera.zoom, SCREEN_HEIGHT / camera.zoom)
-    # Create a new surface that is the size of the visible area
-    visible_surface = pygame.Surface((visible_rect.width, visible_rect.height))
-    # Fill the new surface with white
-    visible_surface.fill((255, 255, 255))
+class GameInterface:
+    def __init__(self, game_state_manager, world_map):
+        self.screen = pygame.display.get_surface()
+        self.game_state_manager = game_state_manager
+        self.camera = game_state_manager.ui_manager.get_camera()
+        self.SCREEN_WIDTH = 1280
+        self.SCREEN_HEIGHT = 720
+        self.world_map = world_map
 
-    # Blit the map onto the new surface at the appropriate offset
-    visible_surface.blit(world_map, (0, 0), visible_rect)
+        self.left_toolbar = Element(0, 100, 50, 720-200, (200, 200, 200))
+        self.left_toolbar.add_button(Button("save", 10, 110, 30, 30, (100, 100, 100), callback=self.game_state_manager.save_game, callback_args="save1", parent=self.left_toolbar))
 
-    # # Calculate the position of the circle relative to the map
-    # circle_pos = (world_map.get_width() // 2 - visible_rect.x, world_map.get_height() // 2 - visible_rect.y)
-    # # Draw a circle at the calculated position
-    # pygame.draw.circle(visible_surface, (255, 0, 0), circle_pos, 50)
+        self.game_state_manager.ui_manager.add_element(self.left_toolbar)
 
-    game_state_manager.grid.render(visible_rect, visible_surface, camera)
+    @memory_profiler.profile
+    def run(self):
+        # Calculate the visible portion of the map
+        visible_rect = pygame.Rect(-self.camera.offset.x / self.camera.zoom, -self.camera.offset.y / self.camera.zoom, self.SCREEN_WIDTH / self.camera.zoom, self.SCREEN_HEIGHT / self.camera.zoom)
+        # Create a new surface that is the size of the visible area
+        visible_surface = pygame.Surface((visible_rect.width, visible_rect.height))
+        # Fill the new surface with white
+        visible_surface.fill((255, 255, 255))
 
-    # Scale the visible surface to the screen size
-    scaled_surface = pygame.transform.scale(visible_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
-    # Draw the scaled surface onto the screen
-    screen.blit(scaled_surface, (0, 0))
+        # Blit the map onto the new surface at the appropriate offset
+        visible_surface.blit(self.world_map, (0, 0), visible_rect)
 
-    # draw selected cell makeup in top left corner
-    font = pygame.font.Font(None, 36)
-    if game_state_manager.ui_manager.get_selected_cell():
-        text = font.render(str(game_state_manager.ui_manager.get_selected_cell().__str__()), True, (0, 0, 0))
-        screen.blit(text, (10, 10))
+        self.game_state_manager.grid.render(visible_rect, visible_surface, self.camera)
 
-    text = font.render(game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
-    screen.blit(text, (10, 50))
+        # Scale the visible surface to the screen size
+        scaled_surface = pygame.transform.scale(visible_surface, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        # Draw the scaled surface onto the screen
+        self.screen.blit(scaled_surface, (0, 0))
 
-    # left toolbar
-    left_toolbar = Element(0, 100, 50, SCREEN_HEIGHT-200, (200, 200, 200))
-    game_state_manager.ui_manager.add_element(left_toolbar)
+        # draw selected cell makeup in top left corner
+        font = pygame.font.Font(None, 36)
+        if self.game_state_manager.ui_manager.get_selected_cell():
+            text = font.render(str(self.game_state_manager.ui_manager.get_selected_cell().__str__()), True, (0, 0, 0))
+            self.screen.blit(text, (10, 10))
 
-    # left toolbar buttons
-    x = 10
-    y = 110
-    padding = 10
-    button_width = 30
-    button_height = 30
-    button_color = (100, 100, 100)
-    left_toolbar.add_button(Button("test", x, y, button_width, button_height, button_color, print, "test", parent=left_toolbar))
-
-
-
-            
+        text = font.render(self.game_state_manager.ui_manager.get_selected_window().__str__(), True, (0, 0, 0))
+        self.screen.blit(text, (10, 50))

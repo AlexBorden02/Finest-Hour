@@ -1,7 +1,7 @@
 
 from ui_manager import UIManager
 from states.main_menu import main_menu
-from states.game import game_interface
+from states.game import GameInterface
 from settings import hidden_variables as settings
 from grid.grid import Grid
 from player import Player
@@ -18,6 +18,7 @@ class GameStateManager:
             cls._instance = super(GameStateManager, cls).__new__(cls)
             # Initial game state
             cls._instance.state = 'main_menu'
+            cls._instance.interface = None
             cls._instance.ui_manager = UIManager(cls._instance)
             cls._instance.player = Player()
             cls._instance.grid = grid
@@ -47,7 +48,7 @@ class GameStateManager:
         if self._instance.state == 'main_menu':
             main_menu(screen, game_state_manager)
         elif self._instance.state == 'game':
-            game_interface(screen, game_state_manager, camera, events, self.get_save_map(), SCREEN_WIDTH, SCREEN_HEIGHT)
+            self._instance.interface.run()
             game_state_manager.get_ui_manager().update(events)
             game_state_manager.get_ui_manager().render(screen)
 
@@ -119,6 +120,7 @@ class GameStateManager:
         self._instance.map_name = 'map_italy.png' # will be picked from a list of maps in the future
         self._instance.npcs.append(Computer(color=(255, 0, 0)))
         self._instance.ui_manager.reset()
+        self._instance.interface = GameInterface(self._instance, load_map)
         return self._instance.set_state('game')
 
     def load_game(self, save_file_name):
@@ -167,6 +169,7 @@ class GameStateManager:
         self._instance.map_name = save_map
         
         self._instance.ui_manager.reset()
+        self._instance.interface = GameInterface(self._instance, load_map)
         self._instance.set_state('game')
         # move camera to mid point of map
         self._instance.get_ui_manager().get_camera().set_camera_position(load_map.get_rect().width/2, load_map.get_rect().height/2)
