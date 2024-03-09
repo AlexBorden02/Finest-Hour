@@ -37,5 +37,5 @@ class Button:
             if self.rect.collidepoint(event.pos):
                 print("Button clicked")
                 if self.callback:
-                    self.callback(self.callback_args)
+                    self.callback(event, *self.callback_args)  # Pass the event as an argument
                 return True

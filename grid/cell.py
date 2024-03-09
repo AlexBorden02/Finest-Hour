@@ -11,12 +11,6 @@ class Cell:
         self.border = False
         self.grid = grid
         self.owner = None
-        self.exposed_edges = {
-            'top': False,
-            'right': False,
-            'bottom': False,
-            'left': False
-        }
 
     def get_type(self):
         return self.cell_type
@@ -47,23 +41,7 @@ class Cell:
     
     def set_claimed(self, claimed):
         self.claimed = claimed
-        self.check_border()
         return self.claimed
-    
-    def check_border(self, recursive=False):
-        neighbours = self.grid.get_edge_neighbors(self)
-        # if any neighbour is not claimed, set border to True
-        self.border = any([not neighbour.claimed for neighbour in neighbours]) & self.claimed
-
-        self.check_edges(neighbours)
-            
-        print(f'Cell: {self.id} Neighbours: {[neighbour.claimed for neighbour in neighbours]} Border: {self.border}')
-
-        if not recursive:
-            for neighbour in neighbours:
-                neighbour.check_border(True)
-
-        return self.border
     
     def get_owner(self):
         return self.owner
@@ -71,21 +49,6 @@ class Cell:
     def set_owner(self, owner):
         self.owner = owner
         return self.owner
-    
-    def check_edges(self, neighbours):
-        # if the cell bordering the edge of self is not claimed, set the edge to exposed
-        for neighbour in neighbours:
-            if neighbour.id[0] == self.id[0] - 1:
-                self.exposed_edges['left'] = not neighbour.claimed
-            if neighbour.id[0] == self.id[0] + 1:
-                self.exposed_edges['right'] = not neighbour.claimed
-            if neighbour.id[1] == self.id[1] - 1:
-                self.exposed_edges['top'] = not neighbour.claimed
-            if neighbour.id[1] == self.id[1] + 1:
-                self.exposed_edges['bottom'] = not neighbour.claimed
-
-
-        return self.exposed_edges
     
     def unclaim(self):
         self.set_claimed(False)
