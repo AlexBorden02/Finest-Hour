@@ -13,6 +13,7 @@ class UIManager:
             cls._instance = super(UIManager, cls).__new__(cls)
             cls._instance.game_state_manager = game_state_manager
             cls._instance.selected_cell = None
+            cls._instance.selected_territory = None
             cls._instance.selected_window = None
             cls._instance.mouse_down_pos = None
             cls._instance.popup_windows = []
@@ -71,6 +72,7 @@ class UIManager:
                                     self._instance.set_selected_cell(None)
                                 else:
                                     self._instance.set_selected_cell(cell)
+                                    self._instance.selected_territory = self._instance.game_state_manager.grid.get_territory_by_cell(cell)
                     elif event.button == 3: # right click
                         window_pos = event.pos
                         cell = self._instance.game_state_manager.grid.get_cell(window_pos, self.get_camera())
@@ -146,6 +148,9 @@ class UIManager:
     def remove_all_popup_windows(self):
         self._instance.popup_windows = []
         return self._instance.popup_windows
+    
+    def get_selected_territory(self):
+        return self._instance.selected_territory
     
     def reset(self):
         self._instance.selected_cell = None

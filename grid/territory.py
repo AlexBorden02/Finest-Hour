@@ -18,10 +18,8 @@ class Territory:
     def get_border_lines(self):
         return self.border_lines
     
-    def expand(self, cell):
-        self.cells.append(cell)
-
     def generate_border(self):
+        self.border_cells = []
         # if a cell has an edge neighbor that is not owned by the same player, it is a border cell
         for cell in self.cells:
             neighbors = cell.grid.get_edge_neighbors(cell)
@@ -31,6 +29,10 @@ class Territory:
                     break
 
     def expand(self, cells):
+        print(f'Expanding territory by {cells}')
         for cell in cells:
             self.cells.append(cell)
+            # set cell attributes
+            cell.set_owner(self.owner)
+            cell.set_claimed(True)
             self.generate_border() 

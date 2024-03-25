@@ -76,3 +76,23 @@ class Grid:
         territory = Territory(cells, owner)
         self.territories.append(territory)
         return territory
+    
+    def get_territory_by_cell(self, cell):
+        for territory in self.territories:
+            if cell in territory.cells:
+                return territory
+        return None
+    
+    def get_expansion_cells(self, territory, num_cells):
+        expansion_cells = []
+        # pick random cell from border cells
+        for i in range(num_cells):
+            cell = random.choice(territory.border_cells)
+            # get neighbors
+            neighbors = self.get_neighbors(cell)
+            # pick random unclaimed neighbor
+            unclaimed_neighbors = [neighbor for neighbor in neighbors if not neighbor.get_claimed()]
+            if unclaimed_neighbors:
+                expansion_cells.append(random.choice(unclaimed_neighbors))
+        return expansion_cells
+    

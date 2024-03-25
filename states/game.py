@@ -38,6 +38,9 @@ class GameInterface:
         self.left_toolbar.add_button(Button("CT", 10, 190, 30, 30, (100, 100, 100), 
             callback=lambda _: self.game_state_manager.grid.create_territory([self.game_state_manager.ui_manager.get_selected_cell()], self.game_state_manager.player), 
             parent=self.left_toolbar))
+        self.left_toolbar.add_button(Button("ET", 10, 230, 30, 30, (100, 100, 100),
+            callback=lambda _: self.game_state_manager.ui_manager.get_selected_territory().expand(self.game_state_manager.grid.get_expansion_cells(self.game_state_manager.ui_manager.get_selected_territory(), 5)),
+            parent=self.left_toolbar))
         
         self.game_state_manager.ui_manager.add_element(self.left_toolbar)
 
